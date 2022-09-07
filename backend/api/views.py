@@ -13,11 +13,11 @@ from .filters import IngredientSearchFilter, RecipeFilter
 from .pagination import CustomPageNumberPagination
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (FavoriteSerializer, FollowListSerializer,
-                             FollowSerializer, IngredientSerializer,
-                             RecipeListSerializer, RecipeWriteSerializer,
-                             ShoppingCartSerializer, TagSerializer)
+                          FollowSerializer, IngredientSerializer,
+                          RecipeListSerializer, RecipeWriteSerializer,
+                          ShoppingCartSerializer, TagSerializer)
 from recipes.models import (Favorite, Ingredient, IngredientQuantity, Recipe,
-                        ShoppingCart, Tag)
+                            ShoppingCart, Tag)
 from users.models import Follow, User
 
 
