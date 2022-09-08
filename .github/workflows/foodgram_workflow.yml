@@ -81,7 +81,6 @@ jobs:
             sudo docker-compose exec -T backend python manage.py makemigrations reviews --no-input
             sudo docker-compose exec -T backend python manage.py migrate
             sudo docker-compose exec -T backend python manage.py collectstatic --no-input
-            sudo docker-compose exec -T backend cp staticfiles/redoc.yaml static/
             sudo docker-compose exec -T backend python manage.py loaddata data/ingredients.json
   
   send_message:
