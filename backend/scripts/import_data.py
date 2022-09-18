@@ -9,8 +9,8 @@ def print_error(error, row, print_error):
 
 
 def create_models(file_path, model, print_errors):
-    with open(file_path, encoding='utf-8', mode='r') as csv_file:
-        csv_reader = csv.DictReader(csv_file, delimiter=",")
+    with open(file_path, newline='') as csv_file:
+        csv_reader = csv.DictReader(csv_file)
         total_count = 0
         successfull = 0
         for row in csv_reader:
