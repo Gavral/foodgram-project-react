@@ -78,6 +78,10 @@ jobs:
             echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
             sudo docker-compose up -d --build
+            sudo docker-compose exec -T backend python manage.py makemigrations --no-input
+            sudo docker-compose exec -T backend python manage.py migrate
+            sudo docker-compose exec -T backend python manage.py collectstatic --no-input
+            sudo docker-compose exec -T backend cp docs/redoc.yaml static/
   
   send_message:
     if: github.ref == 'refs/heads/master'
