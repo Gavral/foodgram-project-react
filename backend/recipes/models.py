@@ -93,7 +93,7 @@ class IngredientQuantity(models.Model):
         ordering = ('-id',)
         constraints = [
             models.UniqueConstraint(
-                fields=('ingredient', 'recipe'),
+                fields=['ingredient', 'recipe'],
                 name='unique_ingredients_in_recipe'
             )
         ]
@@ -136,7 +136,7 @@ class ShoppingCart(models.Model):
         ordering = ('-id',)
         constraints = [
             models.UniqueConstraint(
-                fields=('user', 'recipe'),
+                fields=['user', 'recipe'],
                 name='unique_recipe_in_shopping_cart'
             )
         ]
