@@ -115,7 +115,7 @@ class Favorite(models.Model):
         ordering = ('-id',)
         constraints = [
             models.UniqueConstraint(
-                fields=('user', 'recipe'), name='unique_recipe_in_favorite'
+                fields=['user', 'recipe'], name='unique_recipe_in_favorite'
             )
         ]
         verbose_name = 'Избранное'
