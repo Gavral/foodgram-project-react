@@ -23,7 +23,7 @@ from users.models import Follow, User
 
 
 class FollowApiView(APIView):
-    permission_classes = [IsAuthenticated,]
+    permission_classes = [IsAuthenticated, ]
 
     def get(self, request, id):
         data = {'user': request.user.id, 'following': id}
@@ -44,7 +44,7 @@ class FollowApiView(APIView):
 
 class FollowListAPIView(ListAPIView):
     pagination_class = CustomPageNumberPagination
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, ]
 
     def get(self, request):
         user = request.user
