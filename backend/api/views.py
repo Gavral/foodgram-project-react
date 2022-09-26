@@ -12,8 +12,8 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from .filters import IngredientSearchFilter, RecipeFilter
 from .pagination import CustomPageNumberPagination
 from .permissions import IsAuthorOrReadOnly
-from .serializers import (FavoriteSerializer, FollowListSerializer,
-                          FollowSerializer, IngredientSerializer,
+from .serializers import (FavoriteSerializer, ShowSubscriptionsSerializer,
+                          SubscriptionSerializer, IngredientSerializer,
                           RecipeListSerializer, RecipeWriteSerializer,
                           ShoppingCartSerializer, TagSerializer)
 from recipes.models import (Favorite, Ingredient, IngredientQuantity, Recipe,
@@ -66,7 +66,7 @@ class SubscribeView(APIView):
             'user': request.user.id,
             'author': id
         }
-        serializer = FollowSerializer(
+        serializer = SubscriptionSerializer(
             data=data,
             context={'request': request}
         )
@@ -97,7 +97,7 @@ class ShowSubscriptionsView(ListAPIView):
         user = request.user
         queryset = User.objects.filter(author__user=user)
         page = self.paginate_queryset(queryset)
-        serializer = FollowListSerializer(
+        serializer = ShowSubscriptionsSerializer(
             page, many=True, context={'request': request}
         )
         return self.get_paginated_response(serializer.data)

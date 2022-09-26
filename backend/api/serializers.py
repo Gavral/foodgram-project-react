@@ -29,7 +29,7 @@ class CustomUserSerializer(UserSerializer):
         return Follow.objects.filter(user=request.user, following=obj).exists()
 
 
-class FollowSerializer(serializers.ModelSerializer):
+'''class FollowSerializer(serializers.ModelSerializer):
     class Meta:
         model = Follow
         fields = ('user', 'following')
@@ -95,7 +95,68 @@ class FollowListSerializer(serializers.ModelSerializer):
             recipes, many=True, context=context).data
 
     def get_recipes_count(self, obj):
-        return obj.recipes.count()
+        return obj.recipes.count()'''
+
+
+class ShowSubscriptionsSerializer(serializers.ModelSerializer):
+    """ Сериализатор для отображения подписок пользователя. """
+
+    is_subscribed = serializers.SerializerMethodField()
+    recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'email',
+            'username',
+            'first_name',
+            'last_name',
+            'is_subscribed',
+            'recipes',
+            'recipes_count'
+        ]
+
+    def get_is_subscribed(self, obj):
+        request = self.context.get('request')
+        if request is None or request.user.is_anonymous:
+            return False
+        return Follow.objects.filter(
+            user=request.user, author=obj).exists()
+
+    def get_recipes(self, obj):
+        request = self.context.get('request')
+        if not request or request.user.is_anonymous:
+            return False
+        recipes = Recipe.objects.filter(author=obj)
+        limit = request.query_params.get('recipes_limit')
+        if limit:
+            recipes = recipes[:int(limit)]
+        return ShowFavoriteSerializer(
+            recipes, many=True, context={'request': request}).data
+
+    def get_recipes_count(self, obj):
+        return Recipe.objects.filter(author=obj).count()
+
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+    """ Сериализатор подписок. """
+
+    class Meta:
+        model = Follow
+        fields = ['user', 'author']
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Follow.objects.all(),
+                fields=['user', 'author'],
+            )
+        ]
+
+    def to_representation(self, instance):
+        return ShowSubscriptionsSerializer(instance.author, context={
+            'request': self.context.get('request')
+        }).data
 
 
 class TagSerializer(serializers.ModelSerializer):
