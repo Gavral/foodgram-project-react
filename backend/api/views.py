@@ -21,7 +21,7 @@ from recipes.models import (Favorite, Ingredient, IngredientQuantity, Recipe,
 from users.models import Follow, User
 
 
-class FollowApiView(APIView):
+'''class FollowApiView(APIView):
     permission_classes = [IsAuthenticated, ]
 
     def get(self, request, id):
@@ -49,6 +49,53 @@ class FollowListAPIView(ListAPIView):
     def get(self, request):
         user = request.user
         queryset = User.objects.filter(following__user=user)
+        page = self.paginate_queryset(queryset)
+        serializer = FollowListSerializer(
+            page, many=True, context={'request': request}
+        )
+        return self.get_paginated_response(serializer.data)'''
+
+
+class SubscribeView(APIView):
+    """ Операция подписки/отписки. """
+
+    permission_classes = [IsAuthenticated, ]
+
+    def post(self, request, id):
+        data = {
+            'user': request.user.id,
+            'author': id
+        }
+        serializer = FollowSerializer(
+            data=data,
+            context={'request': request}
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id):
+        author = get_object_or_404(User, id=id)
+        if Follow.objects.filter(
+           user=request.user, author=author).exists():
+            subscription = get_object_or_404(
+                Follow, user=request.user, author=author
+            )
+            subscription.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class ShowSubscriptionsView(ListAPIView):
+    """ Отображение подписок. """
+
+    permission_classes = [IsAuthenticated, ]
+    pagination_class = CustomPageNumberPagination
+
+    def get(self, request):
+        user = request.user
+        queryset = User.objects.filter(author__user=user)
         page = self.paginate_queryset(queryset)
         serializer = FollowListSerializer(
             page, many=True, context={'request': request}
