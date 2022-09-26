@@ -261,13 +261,13 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         return RecipeListSerializer(instance, context=context).data
 
 
-class RecipeRepresentationSerializer(serializers.ModelSerializer):
+'''class RecipeRepresentationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
 
 
-'''class FavoriteSerializer(serializers.ModelSerializer):
+class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
         fields = ('user', 'recipe')
@@ -332,5 +332,5 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         request = self.context.get('request')
         context = {'request': request}
-        return RecipeRepresentationSerializer(
+        return ShowFavoriteSerializer(
             instance.recipe, context=context).data
