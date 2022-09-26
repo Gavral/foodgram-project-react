@@ -267,7 +267,7 @@ class RecipeRepresentationSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'image', 'cooking_time')
 
 
-class FavoriteSerializer(serializers.ModelSerializer):
+'''class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
         fields = ('user', 'recipe')
@@ -287,7 +287,28 @@ class FavoriteSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         context = {'request': request}
         return RecipeRepresentationSerializer(
-            instance.recipe, context=context).data
+            instance.recipe, context=context).data'''
+
+
+class ShowFavoriteSerializer(serializers.ModelSerializer):
+    """ Сериализатор для отображения избранного. """
+
+    class Meta:
+        model = Recipe
+        fields = ['id', 'name', 'image', 'cooking_time']
+
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    """ Сериализатор модели Избранное. """
+
+    class Meta:
+        model = Favorite
+        fields = ['user', 'recipe']
+
+    def to_representation(self, instance):
+        return ShowFavoriteSerializer(instance.recipe, context={
+            'request': self.context.get('request')
+        }).data
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
