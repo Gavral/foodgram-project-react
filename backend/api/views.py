@@ -28,9 +28,10 @@ class FollowApiView(APIView):
     def get(self, request, id):
         data = {'user': request.user.id, 'following': id}
         serializer = FollowSerializer(data=data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, id):
         user = request.user
@@ -51,8 +52,7 @@ class FollowListAPIView(ListAPIView):
         queryset = User.objects.filter(following__user=user)
         page = self.paginate_queryset(queryset)
         serializer = FollowListSerializer(
-            page, many=True,
-            context={'request': request}
+            page, many=True, context={'request': request}
         )
         return self.get_paginated_response(serializer.data)
 
