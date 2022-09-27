@@ -19,7 +19,7 @@ urlpatterns = [
     path('users/<int:id>/subscribe/', SubscribeView.as_view(),
          name='subscribe'),
     path('users/subscriptions/', ShowSubscriptionsView.as_view(),
-         name='subscription'),
+         name='subscriptions'),
     path('auth/', include('djoser.urls.authtoken')),
     path('', include('djoser.urls')),
     path('', include(router_v1.urls)),
