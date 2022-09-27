@@ -64,7 +64,7 @@ class SubscribeView(APIView):
     def post(self, request, id):
         data = {
             'user': request.user.id,
-            'author': id
+            'following': id
         }
         serializer = SubscriptionSerializer(
             data=data,
@@ -76,11 +76,11 @@ class SubscribeView(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, id):
-        author = get_object_or_404(User, id=id)
+        following = get_object_or_404(User, id=id)
         if Follow.objects.filter(
-           user=request.user, author=author).exists():
+           user=request.user, following=following).exists():
             subscription = get_object_or_404(
-                Follow, user=request.user, author=author
+                Follow, user=request.user, following=following
             )
             subscription.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -95,7 +95,7 @@ class ShowSubscriptionsView(ListAPIView):
 
     def get(self, request):
         user = request.user
-        queryset = User.objects.filter(author__user=user)
+        queryset = User.objects.filter(following__user=user)
         page = self.paginate_queryset(queryset)
         serializer = ShowSubscriptionsSerializer(
             page, many=True, context={'request': request}

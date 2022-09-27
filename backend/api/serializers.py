@@ -123,13 +123,13 @@ class ShowSubscriptionsSerializer(serializers.ModelSerializer):
         if request is None or request.user.is_anonymous:
             return False
         return Follow.objects.filter(
-            user=request.user, author=obj).exists()
+            user=request.user, following=obj).exists()
 
     def get_recipes(self, obj):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
-        recipes = Recipe.objects.filter(author=obj)
+        recipes = Recipe.objects.filter(following=obj)
         limit = request.query_params.get('recipes_limit')
         if limit:
             recipes = recipes[:int(limit)]
@@ -137,7 +137,7 @@ class ShowSubscriptionsSerializer(serializers.ModelSerializer):
             recipes, many=True, context={'request': request}).data
 
     def get_recipes_count(self, obj):
-        return Recipe.objects.filter(author=obj).count()
+        return Recipe.objects.filter(following=obj).count()
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
@@ -145,16 +145,16 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Follow
-        fields = ['user', 'author']
+        fields = ['user', 'following']
         validators = [
             UniqueTogetherValidator(
                 queryset=Follow.objects.all(),
-                fields=['user', 'author'],
+                fields=['user', 'following'],
             )
         ]
 
     def to_representation(self, instance):
-        return ShowSubscriptionsSerializer(instance.author, context={
+        return ShowSubscriptionsSerializer(instance.following, context={
             'request': self.context.get('request')
         }).data
 
