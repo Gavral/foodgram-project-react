@@ -240,23 +240,18 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         ingredients = self.initial_data.get('ingredients')
-        if not ingredients:
-            raise serializers.ValidationError({
-                'ingredients': 'Нужно выбрать хотя бы один ингредиент!'
-            })
-        ingredients_list = []
-        for ingredient in ingredients:
-            ingredient_id = ingredient['id']
-            if ingredient_id in ingredients_list:
+        list = []
+        for i in ingredients:
+            amount = i['amount']
+            if int(amount) < 1:
                 raise serializers.ValidationError({
-                    'ingredients': 'Ингредиенты должны быть уникальными!'
+                    'amount': 'Количество ингредиента должно быть больше 0!'
                 })
-            ingredients_list.append(ingredient_id)
-            amount = ingredient['amount']
-            if int(amount) <= 0:
+            if i['id'] in list:
                 raise serializers.ValidationError({
-                    'amount': 'Количество ингредиента должно быть больше нуля!'
+                    'ingredient': 'Ингредиенты должны быть уникальными!'
                 })
+            list.append(i['id'])
 
         tags = self.initial_data.get('tags')
         if not tags:
