@@ -129,7 +129,7 @@ class ShowSubscriptionsSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
-        recipes = Recipe.objects.filter(following=obj)
+        recipes = Recipe.objects.filter(author=obj)
         limit = request.query_params.get('recipes_limit')
         if limit:
             recipes = recipes[:int(limit)]
@@ -137,7 +137,7 @@ class ShowSubscriptionsSerializer(serializers.ModelSerializer):
             recipes, many=True, context={'request': request}).data
 
     def get_recipes_count(self, obj):
-        return Recipe.objects.filter(following=obj).count()
+        return Recipe.objects.filter(author=obj).count()
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):

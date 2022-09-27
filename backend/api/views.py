@@ -79,10 +79,10 @@ class SubscribeView(APIView):
         following = get_object_or_404(User, id=id)
         if Follow.objects.filter(
            user=request.user, following=following).exists():
-            subscription = get_object_or_404(
+            follow = get_object_or_404(
                 Follow, user=request.user, following=following
             )
-            subscription.delete()
+            follow.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
